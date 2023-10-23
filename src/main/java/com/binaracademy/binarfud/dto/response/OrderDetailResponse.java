@@ -6,19 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrderResponse {
-    private Date orderTime;
-    private String destinationAddress;
-    private String note;
-    private Boolean completed;
-    private UserResponse user;
-    private List<OrderDetailResponse> orderDetails;
+public class OrderDetailResponse {
+    private ProductResponse product;
+    private Integer quantity;
+    private Double totalPrice;
 }

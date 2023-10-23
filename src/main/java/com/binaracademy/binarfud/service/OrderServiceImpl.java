@@ -1,11 +1,8 @@
 package com.binaracademy.binarfud.service;
 
 import com.binaracademy.binarfud.dto.request.OrderRequest;
-import com.binaracademy.binarfud.dto.response.JasperResponse;
-import com.binaracademy.binarfud.entity.Cart;
-import com.binaracademy.binarfud.entity.Order;
-import com.binaracademy.binarfud.entity.OrderDetail;
-import com.binaracademy.binarfud.entity.User;
+import com.binaracademy.binarfud.dto.response.*;
+import com.binaracademy.binarfud.entity.*;
 import com.binaracademy.binarfud.exception.DataNotFoundException;
 import com.binaracademy.binarfud.exception.ServiceBusinessException;
 import com.binaracademy.binarfud.repository.CartRepository;
@@ -88,8 +85,37 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<Order> getAllOrderWithPagination(Pageable pageable) {
-        return orderRepository.findAll(pageable);
+    public Page<OrderResponse> getAllOrderWithPagination(String username, Pageable pageable) {
+        try {
+            log.info("Getting all order");
+            User user = userRepository.findFirstByUsername(username).orElseThrow(() -> new DataNotFoundException("User not found"));
+            Page<Order> orderPage = Optional.of(orderRepository.findAllByUser(user, pageable))
+                    .filter(Page::hasContent)
+                    .orElseThrow(() -> new DataNotFoundException("No order found"));
+            return  orderPage.map(order -> OrderResponse.builder()
+                    .orderTime(order.getOrderTime())
+                    .destinationAddress(order.getDestinationAddress())
+                    .note(order.getNote())
+                    .completed(order.getCompleted())
+                    .orderDetails(
+                            order.getOrderDetails().stream().map(orderDetail -> OrderDetailResponse.builder()
+                                            .product(
+                                                    ProductResponse.builder()
+                                                            .productName(orderDetail.getProduct().getProductName())
+                                                            .price(orderDetail.getProduct().getPrice())
+                                                            .build()
+                                            )
+                                    .quantity(orderDetail.getQuantity())
+                                    .totalPrice(orderDetail.getTotalPrice())
+                                    .build()).toList()
+                    )
+                    .build());
+        } catch (DataNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to get all order");
+            throw new ServiceBusinessException("Failed to get all order");
+        }
     }
 
 }

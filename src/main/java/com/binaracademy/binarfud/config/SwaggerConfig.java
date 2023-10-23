@@ -10,11 +10,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @Configuration
 @EnableWebMvc
 public class SwaggerConfig {
-//    @Value("${server.servlet.context-path}")
-//    private String contextPath;
-//    @Value("${server.port:8080}")
-//    private int serverPort;
-
     @Bean
     public OpenAPI api(@Value("Swagger UI for BinarFud") String appDescription,
                                   @Value("v1.0.0") String appVersion
