@@ -16,7 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -50,6 +49,7 @@ public class OrderServiceImpl implements OrderService {
                     .orderTime(new Date())
                     .build();
             Order newOrder = orderRepository.save(order);
+            List<OrderDetail> orderDetails = new ArrayList<>();
             carts.forEach(cart -> {
                 OrderDetail orderDetail = OrderDetail.builder()
                         .order(newOrder)
@@ -57,30 +57,33 @@ public class OrderServiceImpl implements OrderService {
                         .quantity(cart.getQuantity())
                         .totalPrice(cart.getTotalPrice())
                         .build();
-                orderDetailRepository.save(orderDetail);
+                OrderDetail newOrderDetail =  orderDetailRepository.save(orderDetail);
+                orderDetails.add(newOrderDetail);
             });
-            cartRepository.deleteAll(carts);
-            Order userOrder = orderRepository.findById(newOrder.getId()).orElseThrow(() -> new DataNotFoundException("Order not found"));
-            Double orderTotalPrice = newOrder.getOrderDetails().stream().mapToDouble(OrderDetail::getTotalPrice).sum();
-            List<JasperResponse> jasperResponses = userOrder.getOrderDetails().stream().map(orderDetail1 -> JasperResponse.builder()
+            order.setOrderDetails(orderDetails);
+            Double orderTotalPrice = order.getOrderDetails().stream().mapToDouble(OrderDetail::getTotalPrice).sum();
+            List<JasperResponse> jasperResponses = order.getOrderDetails().stream().map(orderDetail1 -> JasperResponse.builder()
                     .productName(orderDetail1.getProduct().getProductName())
                     .quantity(orderDetail1.getQuantity())
                     .totalPrice(orderDetail1.getTotalPrice())
+                    .price(orderDetail1.getProduct().getPrice())
                     .build()).toList();
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put("username", userOrder.getUser().getUsername());
-            parameters.put("orderTime", userOrder.getOrderTime());
-            parameters.put("destinationAddress", userOrder.getDestinationAddress());
-            parameters.put("note", userOrder.getNote());
+            parameters.put("username", order.getUser().getUsername());
+            parameters.put("orderTime", order.getOrderTime().toString());
+            parameters.put("destinationAddress", order.getDestinationAddress());
+            parameters.put("note", order.getNote());
             parameters.put("orderTotalPrice", orderTotalPrice);
 
             JasperReport jasperReport = JasperCompileManager.compileReport(ResourceUtils.getFile("classpath:invoice.jrxml").getAbsolutePath());
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(jasperResponses);
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
             return JasperExportManager.exportReportToPdf(jasperPrint);
+        } catch (DataNotFoundException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Failed to make order");
-            throw new ServiceBusinessException("Failed to make order");
+            throw new ServiceBusinessException(e.getMessage());
         }
     }
 

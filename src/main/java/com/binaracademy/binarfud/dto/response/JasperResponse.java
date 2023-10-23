@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class JasperResponse {
     String productName;
-    Integer price;
+    Double price;
     Integer quantity;
     Double totalPrice;
 }

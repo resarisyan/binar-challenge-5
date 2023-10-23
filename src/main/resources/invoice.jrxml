@@ -59,21 +59,17 @@
             <![CDATA[]]>
         </queryString>
     </subDataset>
-<!--    <queryString>-->
-<!--        <![CDATA[SELECT * FROM orders as o-->
-<!--INNER JOIN users as u ON u.user_id = o.user_id-->
-<!--INNER JOIN order_detail as od ON o.order_id = od.order_id-->
-<!--INNER JOIN product as p ON p.product_code = od.product_id]]>-->
-<!--    </queryString>-->
+
+    <parameter name="destinationAddress" class="java.lang.String"/>
+    <parameter name="note" class="java.lang.String"/>
+    <parameter name="username" class="java.lang.String"/>
+    <parameter name="orderTime" class="java.lang.String"/>
+    <parameter name="orderTotalPrice" class="java.lang.Double"/>
+
     <field name="productName" class="java.lang.String"/>
     <field name="price" class="java.lang.Double"/>
     <field name="quantity" class="java.lang.Integer"/>
     <field name="totalPrice" class="java.lang.Double"/>
-    <field name="destinationAddress" class="java.lang.String"/>
-    <field name="note" class="java.lang.String"/>
-    <field name="username" class="java.lang.String"/>
-    <field name="orderTime" class="java.sql.Timestamp"/>
-    <field name="orderTotalPrice" class="java.lang.Integer"/>
     <title>
         <band height="175" splitType="Stretch">
             <staticText>
@@ -88,7 +84,7 @@
             </staticText>
             <textField>
                 <reportElement x="0" y="115" width="120" height="15" uuid="33274f5d-5b7e-4be2-a2ff-65d452a618ed"/>
-                <textFieldExpression><![CDATA[username]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$P{username}]]></textFieldExpression>
             </textField>
             <line>
                 <reportElement x="0" y="80" width="556" height="1" uuid="806ce5df-1219-4876-ae0c-ca7405b1f246">
@@ -96,10 +92,6 @@
                     <property name="com.jaspersoft.studio.unit.height" value="px"/>
                 </reportElement>
             </line>
-            <textField>
-                <reportElement x="410" y="115" width="120" height="80" uuid="edbd74ac-0cbd-44c9-8a8e-ccf745191172"/>
-                <textFieldExpression><![CDATA[destinationAddress]]></textFieldExpression>
-            </textField>
             <staticText>
                 <reportElement x="410" y="90" width="84" height="25" uuid="139ebe8d-25b0-411e-986c-270015400874">
                     <property name="local_mesure_unitheight" value="pixel"/>
@@ -110,6 +102,10 @@
                 </textElement>
                 <text><![CDATA[Ship to:]]></text>
             </staticText>
+            <textField>
+                <reportElement x="410" y="130" width="120" height="15" uuid="2d2f365d-7b12-4a8f-990d-ff528a2660bc"/>
+                <textFieldExpression><![CDATA[$P{destinationAddress}]]></textFieldExpression>
+            </textField>
             <staticText>
                 <reportElement x="415" y="10" width="50" height="20" uuid="0f86baff-6386-4f3f-b3fe-2388707babe8"/>
                 <box rightPadding="4"/>
@@ -118,11 +114,11 @@
             </staticText>
             <textField pattern="EEEEE dd MMMMM yyyy">
                 <reportElement x="465" y="10" width="84" height="20" uuid="bb10dbe1-0a4f-4722-9953-c163b63cf979"/>
-                <textFieldExpression><![CDATA[orderTime]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$P{orderTime}]]></textFieldExpression>
             </textField>
             <image hAlign="Center">
                 <reportElement x="0" y="0" width="65" height="60" uuid="94883631-a913-43e2-b182-ab8d77d0181e"/>
-                <imageExpression><![CDATA["invoice_logo.png"]]></imageExpression>
+                <imageExpression><![CDATA["Logo-BinarFud.png"]]></imageExpression>
             </image>
             <textField pattern="EEEEE dd MMMMM yyyy">
                 <reportElement x="465" y="30" width="84" height="20" uuid="3836ce65-eca3-4cad-a6de-b1818def0a2b"/>
@@ -165,28 +161,28 @@
                 <textElement>
                     <font fontName="Arial" size="12" isBold="true"/>
                 </textElement>
-                <text><![CDATA[productName]]></text>
+                <text><![CDATA[Product Name]]></text>
             </staticText>
             <staticText>
                 <reportElement style="Column header" positionType="Float" x="138" y="0" width="138" height="20" forecolor="#000000" uuid="a8d11dae-6869-46dc-8aa0-c26e10586252"/>
                 <textElement>
                     <font fontName="Arial" size="12" isBold="true"/>
                 </textElement>
-                <text><![CDATA[price]]></text>
+                <text><![CDATA[Price]]></text>
             </staticText>
             <staticText>
                 <reportElement style="Column header" positionType="Float" x="276" y="0" width="138" height="20" forecolor="#000000" uuid="25d792b5-32e8-4e3a-98a8-4dcb0114125d"/>
                 <textElement>
                     <font fontName="Arial" size="12" isBold="true"/>
                 </textElement>
-                <text><![CDATA[quantity]]></text>
+                <text><![CDATA[Quantity]]></text>
             </staticText>
             <staticText>
                 <reportElement style="Column header" positionType="Float" x="414" y="0" width="138" height="20" forecolor="#000000" uuid="4c3b3c89-cbcb-4f56-b8be-7402e4102811"/>
                 <textElement>
                     <font fontName="Arial" size="12" isBold="true"/>
                 </textElement>
-                <text><![CDATA[totalPrice]]></text>
+                <text><![CDATA[Total Price]]></text>
             </staticText>
         </band>
     </columnHeader>
@@ -232,7 +228,7 @@
                     <bottomPen lineWidth="1.1" lineStyle="Dashed"/>
                     <rightPen lineWidth="1.1" lineStyle="Dashed"/>
                 </box>
-                <textFieldExpression><![CDATA[$F{note}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$P{note}]]></textFieldExpression>
             </textField>
             <staticText>
                 <reportElement positionType="Float" mode="Opaque" x="0" y="147" width="556" height="30" backcolor="#E6E8E9" uuid="36aa233d-4305-48e6-974a-1bbf89bb3c8f"/>
@@ -253,7 +249,7 @@
             </staticText>
             <textField>
                 <reportElement x="440" y="55" width="120" height="80" uuid="edbd74ac-0cbd-44c9-8a8e-ccf745191172"/>
-                <textFieldExpression><![CDATA[orderTotalPrice]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$P{orderTotalPrice}]]></textFieldExpression>
             </textField>
         </band>
     </lastPageFooter>
