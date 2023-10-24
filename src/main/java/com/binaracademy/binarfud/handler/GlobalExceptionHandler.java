@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(ServiceBusinessException.class)
+    @ExceptionHandler({ServiceBusinessException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public APIResponse handleServiceException(ServiceBusinessException exception) {
         return new APIResponse(

@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping(value = "/orders", produces = "application/json")
 @AllArgsConstructor
 public class OrderController {
     OrderService orderService;

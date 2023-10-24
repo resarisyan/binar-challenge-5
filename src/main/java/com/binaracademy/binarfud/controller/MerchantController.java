@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/merchants")
+@RequestMapping(value = "/merchants", produces = "application/json")
 @AllArgsConstructor
 public class MerchantController {
     private MerchantService merchantService;

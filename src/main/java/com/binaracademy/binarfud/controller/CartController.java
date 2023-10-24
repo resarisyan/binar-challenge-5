@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/carts")
+@RequestMapping(value = "/carts", produces = "application/json")
 @AllArgsConstructor
 public class CartController {
     private CartService cartService;
